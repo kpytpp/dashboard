@@ -1,0 +1,227 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>北極星ダッシュボード</title>
+<meta name="color-scheme" content="dark">
+<meta name="theme-color" content="#080B16">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="北極星">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23080B16'/%3E%3Cpath d='M50 14 L56 44 L86 50 L56 56 L50 86 L44 56 L14 50 L44 44 Z' fill='%23F5D08A'/%3E%3Ccircle cx='50' cy='50' r='3.5' fill='%23FFF7E6'/%3E%3C/svg%3E">
+<link rel="apple-touch-icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'%3E%3Crect width='100' height='100' rx='24' fill='%23080B16'/%3E%3Cpath d='M50 14 L56 44 L86 50 L56 56 L50 86 L44 56 L14 50 L44 44 Z' fill='%23F5D08A'/%3E%3Ccircle cx='50' cy='50' r='3.5' fill='%23FFF7E6'/%3E%3C/svg%3E">
+<style>
+  :root{
+    --bg:#080B16; --bg-2:#0C1122; --panel:#111834; --panel-2:#0E1428;
+    --ink:#ECF1FF; --muted:#98A4C6; --faint:#5E6A8E; --border:#212A48; --border-soft:#1A2240;
+    --star:#F5D08A; --star-bright:#FFE7B4; --star-soft:rgba(245,208,138,.10); --cool:#8FB2FF;
+    --good:#63D3A2; --good-soft:rgba(99,211,162,.13);
+    --warn:#E2A857; --warn-soft:rgba(226,168,87,.13);
+    --stale:#6B7699; --stale-soft:rgba(107,118,153,.14);
+    --radius:16px;
+    --serif:"Hiragino Mincho ProN","Yu Mincho",YuMincho,"Noto Serif JP","Times New Roman",serif;
+    --sans:-apple-system,BlinkMacSystemFont,"Hiragino Kaku Gothic ProN","Hiragino Sans","Yu Gothic UI","Yu Gothic","Noto Sans JP","Segoe UI",sans-serif;
+    --mono:ui-monospace,"SFMono-Regular","Cascadia Mono",Consolas,"Yu Gothic",monospace;
+  }
+  *{box-sizing:border-box}
+  html{-webkit-text-size-adjust:100%}
+  body{margin:0;color:var(--ink);font-family:var(--sans);line-height:1.65;
+    background:
+      radial-gradient(1100px 520px at 50% -140px, rgba(143,178,255,.10), transparent 60%),
+      radial-gradient(680px 340px at 50% -60px, var(--star-soft), transparent 62%),
+      linear-gradient(180deg, var(--bg-2), var(--bg) 340px);
+    background-attachment:fixed;background-color:var(--bg);
+    -webkit-font-smoothing:antialiased;text-rendering:optimizeLegibility;min-height:100vh;}
+  .wrap{max-width:880px;margin:0 auto;padding:34px 18px 64px;}
+
+  /* ---- Hero ---- */
+  .hero{text-align:center;padding:14px 0 30px;position:relative;}
+  .polaris{width:62px;height:62px;margin:0 auto 14px;display:block;position:relative;filter:drop-shadow(0 0 14px rgba(245,208,138,.5));}
+  .polaris .tw{transform-origin:50% 50%;animation:tw 4.2s ease-in-out infinite;}
+  @keyframes tw{0%,100%{opacity:1;transform:scale(1)}50%{opacity:.72;transform:scale(.93)}}
+  .eyebrow{font-family:var(--mono);font-size:11px;letter-spacing:.34em;text-transform:uppercase;
+    color:var(--star);margin:0 0 10px;padding-left:.34em;}
+  h1{font-family:var(--serif);font-weight:600;font-size:clamp(28px,7.4vw,40px);line-height:1.15;
+    margin:0;letter-spacing:.02em;text-wrap:balance;
+    background:linear-gradient(180deg,#FFFFFF,#CFD9F5);-webkit-background-clip:text;background-clip:text;color:transparent;}
+  .tagline{color:var(--muted);font-size:13.5px;margin:11px 0 0;letter-spacing:.02em;}
+  .updated{margin-top:16px;font-family:var(--mono);font-size:12px;color:var(--faint);
+    font-variant-numeric:tabular-nums;display:inline-flex;align-items:center;gap:8px;
+    padding:6px 13px;border:1px solid var(--border-soft);border-radius:999px;background:rgba(255,255,255,.015);}
+  .updated .dot{width:6px;height:6px;border-radius:50%;background:var(--good);box-shadow:0 0 8px var(--good);}
+  .legend{display:flex;justify-content:center;gap:16px;flex-wrap:wrap;margin-top:16px;font-size:12px;color:var(--muted);}
+  .legend span{display:inline-flex;align-items:center;gap:6px;}
+  .swatch{width:8px;height:8px;border-radius:50%;}
+  .s-good{background:var(--good);box-shadow:0 0 6px var(--good-soft)} .s-warn{background:var(--warn)} .s-stale{background:var(--stale)}
+
+  /* ---- Section ---- */
+  section{margin-top:30px;}
+  .sec-head{display:flex;align-items:center;gap:12px;margin:0 0 13px;}
+  .sec-head h2{font-family:var(--serif);font-size:16px;font-weight:600;margin:0;letter-spacing:.04em;color:var(--ink);white-space:nowrap;}
+  .sec-head .en{font-family:var(--mono);font-size:10px;letter-spacing:.22em;text-transform:uppercase;color:var(--star);opacity:.75;white-space:nowrap;}
+  .rule{flex:1;height:1px;background:linear-gradient(90deg,var(--border),transparent);}
+
+  .grid3{display:grid;grid-template-columns:1fr;gap:13px;}
+  @media (min-width:640px){.grid3{grid-template-columns:repeat(3,1fr);}}
+  .grid2{display:grid;grid-template-columns:1fr;gap:13px;}
+  @media (min-width:640px){.grid2{grid-template-columns:1fr 1fr;}}
+
+  .card{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);
+    border-radius:var(--radius);padding:16px 17px;position:relative;overflow:hidden;}
+  .card::before{content:"";position:absolute;inset:0 0 auto 0;height:1px;
+    background:linear-gradient(90deg,transparent,rgba(245,208,138,.28),transparent);}
+  .card.accent{border-color:rgba(245,208,138,.34);}
+
+  .stat .top{display:flex;align-items:center;justify-content:space-between;gap:8px;margin-bottom:10px;}
+  .stat .name{font-weight:700;font-size:15px;display:flex;align-items:center;gap:7px;}
+  .stat .name .day{font-size:11px;color:var(--faint);font-weight:600;}
+  .stat .date{font-family:var(--mono);font-size:12px;color:var(--muted);font-variant-numeric:tabular-nums;margin-bottom:5px;}
+  .stat .topic{font-size:12.5px;color:var(--muted);line-height:1.55;
+    display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+
+  .pill{display:inline-flex;align-items:center;gap:5px;font-size:11px;font-weight:700;
+    padding:3px 10px;border-radius:999px;white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .pill .pd{width:6px;height:6px;border-radius:50%;}
+  .p-good{background:var(--good-soft);color:var(--good);} .p-good .pd{background:var(--good);box-shadow:0 0 6px var(--good);}
+  .p-warn{background:var(--warn-soft);color:var(--warn);} .p-warn .pd{background:var(--warn);}
+  .p-stale{background:var(--stale-soft);color:var(--stale);} .p-stale .pd{background:var(--stale);}
+
+  .feature{display:flex;align-items:center;gap:18px;flex-wrap:wrap;}
+  .feature .big{font-family:var(--serif);font-size:27px;font-weight:600;letter-spacing:.01em;
+    color:var(--star-bright);line-height:1;text-shadow:0 0 18px rgba(245,208,138,.28);}
+  .feature .meta{flex:1;min-width:180px;}
+  .feature .topic{font-size:14px;color:var(--ink);font-weight:600;margin-bottom:3px;}
+  .feature .sub{font-size:12px;color:var(--muted);font-family:var(--mono);}
+
+  .list{list-style:none;margin:0;padding:0;}
+  .list li{display:flex;gap:12px;padding:9px 0;border-top:1px solid var(--border-soft);align-items:flex-start;}
+  .list li:first-child{border-top:none;padding-top:1px;}
+  .list .d{font-family:var(--mono);font-size:11px;color:var(--star);opacity:.72;padding-top:2px;white-space:nowrap;
+    font-variant-numeric:tabular-nums;min-width:38px;}
+  .list .t{font-size:13px;color:var(--ink);line-height:1.5;
+    display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+
+  footer{margin-top:38px;padding-top:18px;border-top:1px solid var(--border-soft);
+    font-size:11.5px;color:var(--faint);line-height:1.7;text-align:center;}
+  footer code{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(255,255,255,.03);
+    padding:1px 6px;border-radius:5px;border:1px solid var(--border-soft);}
+
+  .reveal{opacity:0;transform:translateY(10px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards;}
+  @keyframes rise{to{opacity:1;transform:none}}
+  @media (prefers-reduced-motion:reduce){.reveal,.polaris .tw{animation:none;opacity:1;transform:none;}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <header class="hero reveal">
+    <svg class="polaris" viewBox="0 0 100 100" aria-hidden="true">
+      <g class="tw">
+        <path d="M50 6 L57.5 42.5 L94 50 L57.5 57.5 L50 94 L42.5 57.5 L6 50 L42.5 42.5 Z" fill="#F7DCA0"/>
+        <path d="M50 24 L54 46 L76 50 L54 54 L50 76 L46 54 L24 50 L46 46 Z" fill="#FFF1D4"/>
+        <circle cx="50" cy="50" r="3.4" fill="#FFFDF6"/>
+      </g>
+    </svg>
+    <p class="eyebrow">North Star</p>
+    <h1>北極星ダッシュボード</h1>
+    <p class="tagline">各ジャンルの最新を、ひと目で。目的から逆算する。</p>
+    <div class="updated"><span class="dot"></span><span id="updated"></span></div>
+    <div class="legend">
+      <span><i class="swatch s-good"></i>新しい</span>
+      <span><i class="swatch s-warn"></i>やや古い</span>
+      <span><i class="swatch s-stale"></i>要確認</span>
+    </div>
+  </header>
+
+  <section class="reveal" style="animation-delay:.06s">
+    <div class="sec-head"><h2>週次リサーチ</h2><span class="en">weekly</span><span class="rule"></span></div>
+    <div class="grid3" id="weekly"></div>
+  </section>
+
+  <section class="reveal" style="animation-delay:.12s">
+    <div class="sec-head"><h2>高齢者虐待情報</h2><span class="en">monthly</span><span class="rule"></span></div>
+    <div class="card accent feature" id="elder"></div>
+  </section>
+
+  <div class="grid2">
+    <section class="reveal" style="animation-delay:.18s;margin-top:30px">
+      <div class="sec-head"><h2>雑学・教養</h2><span class="en">knowledge</span><span class="rule"></span></div>
+      <div class="card"><ul class="list" id="zatsu"></ul></div>
+    </section>
+    <section class="reveal" style="animation-delay:.24s;margin-top:30px">
+      <div class="sec-head"><h2>読書リスト</h2><span class="en">reading</span><span class="rule"></span></div>
+      <div class="card"><ul class="list" id="reading"></ul></div>
+    </section>
+  </div>
+
+  <footer class="reveal" style="animation-delay:.3s">
+    非機密ジャンルのみのスナップショット（業務機密・個人情報は含みません）。<br>
+    全ジャンルの最新版は Obsidian の <code>ダッシュボード.md</code>（毎時自動更新）で。
+  </footer>
+</div>
+
+<script>
+(function(){
+  const UPDATED="2026-07-17 07:27";
+  const weekly=[
+    {name:"株",day:"火",date:"2026-07-14",max:8,topic:"※情報収集の習慣化用。投資判断の根拠ではない。数値・最新情報は正規ソースで確認すること。"},
+    {name:"AI",day:"水",date:"2026-07-15",max:8,topic:"今週のAI最新情報（2026年7月中旬）"},
+    {name:"技術",day:"木",date:"2026-07-16",max:8,topic:"週次テクノロジーリサーチ（2026年7月16日）"}
+  ];
+  const elder={date:"2026-07-13",max:9,topic:"養護者虐待・身体拘束・成年後見の週次収集"};
+  const zatsu=[
+    {date:"2026-07-17",t:"Longevity（ロンジェビティ）とは"},
+    {date:"2026-07-17",t:"事実認識と欲求・同調圧力"},
+    {date:"2026-07-15",t:"Forward Deployed Engineer（FDE）とPalantirの組織哲学"},
+    {date:"2026-07-15",t:"読書は本の一文との出会いが人生を変える（信条）"},
+    {date:"2026-07-12",t:"NotebookLM × Obsidian × Claude 連携"},
+    {date:"2026-07-12",t:"生成AI（LLM）の回答精度・信頼性を上げる手法"}
+  ];
+  const reading=[
+    {date:"2026-07-17",t:"糖質疲労 — 糖質と中性脂肪・HDLの傾向"},
+    {date:"2026-06-25",t:"微分（学習メモ）— 記号の使い分け早見表"},
+    {date:"2026-06-25",t:"チャットGPTと学ぶExcelマクロ"},
+    {date:"2026-06-23",t:"孫氏の兵法"}
+  ];
+
+  const DAY=86400000;
+  function ago(dateStr){
+    const d=new Date(dateStr+"T00:00:00");
+    const t=new Date(); t.setHours(0,0,0,0);
+    return Math.max(0,Math.round((t-d)/DAY));
+  }
+  function agoLabel(n){ return n===0?"今日":n===1?"昨日":n+"日前"; }
+  function status(n,max){ if(n<=max)return"good"; if(n<=max*2)return"warn"; return"stale"; }
+  function pill(n,max){ const s=status(n,max); return '<span class="pill p-'+s+'"><i class="pd"></i>'+agoLabel(n)+'</span>'; }
+
+  document.getElementById("updated").textContent="最終更新 "+UPDATED;
+
+  document.getElementById("weekly").innerHTML=weekly.map(function(w){
+    const n=ago(w.date);
+    return '<div class="card stat">'
+      +'<div class="top"><span class="name">'+w.name+'<span class="day">'+w.day+'</span></span>'+pill(n,w.max)+'</div>'
+      +'<div class="date">'+w.date+'</div>'
+      +'<div class="topic">'+w.topic+'</div></div>';
+  }).join("");
+
+  (function(){
+    const n=ago(elder.date);
+    document.getElementById("elder").innerHTML=
+      '<div class="big">'+agoLabel(n)+'</div>'
+      +'<div class="meta"><div class="topic">'+elder.topic+'</div>'
+      +'<div class="sub">最新収集 '+elder.date+'（月次）</div></div>'
+      +pill(n,elder.max);
+  })();
+
+  function renderList(id,arr){
+    document.getElementById(id).innerHTML=arr.map(function(x){
+      const m=x.date.slice(5).replace("-","/");
+      return '<li><span class="d">'+m+'</span><span class="t">'+x.t+'</span></li>';
+    }).join("");
+  }
+  renderList("zatsu",zatsu);
+  renderList("reading",reading);
+})();
+</script>
+</body>
+</html>
