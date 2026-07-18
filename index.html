@@ -80,6 +80,23 @@
   .list li:first-child{border-top:none;padding-top:1px;}
   .list .d{font-family:var(--mono);font-size:11px;color:var(--star);opacity:.72;padding-top:2px;white-space:nowrap;font-variant-numeric:tabular-nums;min-width:38px;}
   .list .t{font-size:13px;color:var(--ink);line-height:1.5;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden;}
+  .tblwrap{overflow-x:auto;-webkit-overflow-scrolling:touch;}
+  .tbl{width:100%;border-collapse:collapse;font-size:12px;min-width:520px;}
+  .tbl th,.tbl td{text-align:left;padding:8px 10px;border-bottom:1px solid var(--border-soft);vertical-align:top;}
+  .tbl thead th{font-family:var(--mono);font-size:10px;letter-spacing:.1em;text-transform:uppercase;color:var(--faint);font-weight:600;}
+  .tbl .no{font-family:var(--mono);color:var(--star);white-space:nowrap;font-variant-numeric:tabular-nums;}
+  .tbl .nm{font-family:var(--mono);font-size:11px;color:var(--ink);white-space:nowrap;}
+  .tbl .cy{font-family:var(--mono);font-size:11px;color:var(--muted);white-space:nowrap;}
+  .tbl .ty{font-size:10px;color:var(--muted);white-space:nowrap;}
+  .tbl .fn{color:var(--muted);}
+  .prog{display:grid;grid-template-columns:1fr;gap:13px;}
+  @media (min-width:640px){.prog{grid-template-columns:repeat(3,1fr);}}
+  .pcol{background:linear-gradient(180deg,var(--panel),var(--panel-2));border:1px solid var(--border);border-radius:var(--radius);padding:14px 15px;}
+  .pcol h3{font-size:12px;margin:0 0 6px;font-weight:700;letter-spacing:.03em;}
+  .pcol ul{list-style:none;margin:0;padding:0;}
+  .pcol li{font-size:12px;color:var(--muted);padding:6px 0;border-top:1px solid var(--border-soft);line-height:1.5;}
+  .pcol li:first-child{border-top:none;}
+  .pc-done h3{color:var(--good);} .pc-doing h3{color:var(--warn);} .pc-want h3{color:var(--star);}
   footer{margin-top:38px;padding-top:18px;border-top:1px solid var(--border-soft);font-size:11.5px;color:var(--faint);line-height:1.7;text-align:center;}
   footer code{font-family:var(--mono);font-size:11px;color:var(--muted);background:rgba(255,255,255,.03);padding:1px 6px;border-radius:5px;border:1px solid var(--border-soft);}
   .reveal{opacity:0;transform:translateY(10px);animation:rise .6s cubic-bezier(.2,.7,.2,1) forwards;}
@@ -103,11 +120,13 @@
     <section class="reveal" style="animation-delay:.18s;margin-top:30px"><div class="sec-head"><h2>雑学・教養</h2><span class="en">knowledge</span><span class="rule"></span></div><div class="card"><ul class="list" id="zatsu"></ul></div></section>
     <section class="reveal" style="animation-delay:.24s;margin-top:30px"><div class="sec-head"><h2>読書リスト</h2><span class="en">reading</span><span class="rule"></span></div><div class="card"><ul class="list" id="reading"></ul></div></section>
   </div>
-  <footer class="reveal" style="animation-delay:.3s">非機密ジャンルのみのスナップショット（業務機密・個人情報は含みません）。<br>全ジャンルの最新版は Obsidian の <code>ダッシュボード.md</code>（毎時自動更新）で。</footer>
+  <section class="reveal" style="animation-delay:.3s"><div class="sec-head"><h2>運用状況</h2><span class="en">routines</span><span class="rule"></span></div><div class="card"><div class="tblwrap"><table class="tbl"><thead><tr><th>No</th><th>名前</th><th>機能</th><th>周期</th><th>種別</th></tr></thead><tbody id="routines"></tbody></table></div></div></section>
+  <section class="reveal" style="animation-delay:.36s"><div class="sec-head"><h2>進捗</h2><span class="en">roadmap</span><span class="rule"></span></div><div class="prog" id="progress"></div></section>
+  <footer class="reveal" style="animation-delay:.42s">非機密ジャンルのみのスナップショット（業務機密・個人情報は含みません）。<br>全ジャンルの最新版は Obsidian の <code>ダッシュボード.md</code>（毎時自動更新）で。</footer>
 </div>
 <script>
 (function(){
-  var D = {"updated":"2026-07-18 08:00","weekly":[{"name":"株","day":"火","date":"2026-07-14","max":8,"topic":"※情報収集の習慣化用。投資判断の根拠ではない。数値・最新情報は正規ソースで確認すること。"},{"name":"AI","day":"水","date":"2026-07-15","max":8,"topic":"今週のAI最新情報（2026年7月中旬）"},{"name":"技術","day":"木","date":"2026-07-16","max":8,"topic":"週次テクノロジーリサーチ（2026年7月16日）"}],"elder":{"date":"2026-07-13","max":9,"topic":"養護者虐待・身体拘束・成年後見の週次収集"},"zatsu":[{"date":"2026-07-17","t":"Longevity（ロンジェビティ）とは"},{"date":"2026-07-17","t":"事実認識と欲求・同調圧力"},{"date":"2026-07-15","t":"読書は本の一文との出会いが人生を変え、そのために読んでいる。"},{"date":"2026-07-15","t":"Forward Deployed Engineer (FDE): 起源とPalantirの哲学"},{"date":"2026-07-12","t":"NotebookLM × Obsidian×Claude 連携（notebooklm-mcp-cli）"},{"date":"2026-07-12","t":"生成AI（特に大規模言語モデルLLM）の回答精度と信頼性を向上させるための手法。"}],"reading":[{"date":"2026-07-17","t":"「糖質を減らすと、脂質を多めに摂っても中性脂肪は下がりやすく、HDL（善玉）は上がりやすい」という傾向は最新の体系的レビューや試験でも概ね支持されている。ただし…"},{"date":"2026-06-25","t":"📌 微分記号の使い分け早見表"},{"date":"2026-06-25","t":"￥に注意⚠️（料金面で注意点があるとのメモ）"},{"date":"2026-06-23","t":"孫氏の兵法"}]};
+  var D = {"updated":"2026-07-18 10:00","weekly":[{"name":"株","day":"火","date":"2026-07-14","max":8,"topic":"※情報収集の習慣化用。投資判断の根拠ではない。数値・最新情報は正規ソースで確認すること。"},{"name":"AI","day":"水","date":"2026-07-15","max":8,"topic":"今週のAI最新情報（2026年7月中旬）"},{"name":"技術","day":"木","date":"2026-07-16","max":8,"topic":"週次テクノロジーリサーチ（2026年7月16日）"}],"elder":{"date":"2026-07-13","max":9,"topic":"養護者虐待・身体拘束・成年後見の週次収集"},"zatsu":[{"date":"2026-07-17","t":"Longevity（ロンジェビティ）とは"},{"date":"2026-07-17","t":"事実認識と欲求・同調圧力"},{"date":"2026-07-15","t":"読書は本の一文との出会いが人生を変え、そのために読んでいる。"},{"date":"2026-07-15","t":"Forward Deployed Engineer (FDE): 起源とPalantirの哲学"},{"date":"2026-07-12","t":"NotebookLM × Obsidian×Claude 連携（notebooklm-mcp-cli）"},{"date":"2026-07-12","t":"生成AI（特に大規模言語モデルLLM）の回答精度と信頼性を向上させるための手法。"}],"reading":[{"date":"2026-07-17","t":"「糖質を減らすと、脂質を多めに摂っても中性脂肪は下がりやすく、HDL（善玉）は上がりやすい」という傾向は最新の体系的レビューや試験でも概ね支持されている。ただし…"},{"date":"2026-06-25","t":"📌 微分記号の使い分け早見表"},{"date":"2026-06-25","t":"￥に注意⚠️（料金面で注意点があるとのメモ）"},{"date":"2026-06-23","t":"孫氏の兵法"}],"routines":[{"no":"01","name":"morning-obsidian-organize","fn":"未整理フォルダの自動分類・整理","cycle":"30分ごと","type":"アプリ内"},{"no":"02","name":"nightly-elder-abuse-research","fn":"高齢者虐待・身体拘束・成年後見の週次収集","cycle":"月 4:00","type":"アプリ内"},{"no":"03","name":"obsidian-ics-sync","fn":"ICS取込→Googleカレンダー(紫)登録","cycle":"毎日 7:00","type":"アプリ内"},{"no":"04","name":"weekly-stock-research","fn":"株ウォッチのテーマ別 週次調査","cycle":"火 4:00","type":"アプリ内"},{"no":"05","name":"weekly-ai-research","fn":"AI分野の週次調査","cycle":"水 4:00","type":"アプリ内"},{"no":"06","name":"weekly-tech-research","fn":"技術分野の週次調査","cycle":"木 4:00","type":"アプリ内"},{"no":"07","name":"kuroko-status-report","fn":"監視ダイジェストをntfyで報告","cycle":"毎日 8/13/20","type":"アプリ内"},{"no":"08","name":"obsidian-publish-to-drive","fn":"非機密ノートをGoogle Driveへミラー","cycle":"毎時","type":"Windows"},{"no":"09","name":"obsidian-monitor","fn":"タスク成果物の見張り＋異常ntfy","cycle":"毎時","type":"Windows"},{"no":"10","name":"obsidian-dashboard","fn":"Obsidianダッシュボード生成","cycle":"毎時","type":"Windows"},{"no":"11","name":"obsidian-dashboard-web","fn":"北極星アプリ(GitHub Pages)更新","cycle":"毎日 8:00","type":"Windows"}],"progress":{"done":["監視システム（見張り＋ntfy＋報告役）","北極星アプリ＋自動更新","Obsidianダッシュボード","株ウォッチ＋テーマ別週次","Driveミラー","リモートコントロール","週次リサーチ(株/AI/技術)","ICS取込","未整理の自動整理"],"doing":["（現在なし。次は自己点検ルーティン）"],"want":["自己点検・自己是正ルーティン（品質管理＝人間は執行判断だけ）","ダッシュボードのタップ→NotebookLM/Obsidianへ","アプリ機能追加（検索/タブ/グラフ）","データSIM比較（通信費）","Microsoft 365 棚卸し","週次ふりかえりページ自動生成","データ収集と分析（本業＝早期発見の本丸）"]}};
   var DAY=86400000;
   function ago(s){ if(!s)return 999; var d=new Date(s+"T00:00:00"); var t=new Date(); t.setHours(0,0,0,0); return Math.max(0,Math.round((t-d)/DAY)); }
   function agoLabel(n){ return n===0?"今日":n===1?"昨日":n+"日前"; }
@@ -118,6 +137,8 @@
   (function(){ var n=ago(D.elder.date); document.getElementById("elder").innerHTML='<div class="big">'+agoLabel(n)+'</div><div class="meta"><div class="topic">'+D.elder.topic+'</div><div class="sub">最新収集 '+D.elder.date+'（月次）</div></div>'+pill(n,D.elder.max); })();
   function rl(id,arr){ document.getElementById(id).innerHTML=arr.map(function(x){ var m=x.date.slice(5).replace("-","/"); return '<li><span class="d">'+m+'</span><span class="t">'+x.t+'</span></li>'; }).join(""); }
   rl("zatsu",D.zatsu); rl("reading",D.reading);
+  document.getElementById("routines").innerHTML=(D.routines||[]).map(function(r){ return '<tr><td class="no">'+r.no+'</td><td class="nm">'+r.name+'</td><td class="fn">'+r.fn+'</td><td class="cy">'+r.cycle+'</td><td class="ty">'+r.type+'</td></tr>'; }).join("");
+  (function(){ var p=D.progress||{done:[],doing:[],want:[]}; function col(cls,icon,title,arr){ return '<div class="pcol '+cls+'"><h3>'+icon+' '+title+'</h3><ul>'+(arr||[]).map(function(x){return '<li>'+x+'</li>';}).join("")+'</ul></div>'; } document.getElementById("progress").innerHTML=col('pc-done','✅','完了',p.done)+col('pc-doing','🔧','途中',p.doing)+col('pc-want','💡','やりたい',p.want); })();
 })();
 </script>
 </body>
